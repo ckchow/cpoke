@@ -1,16 +1,18 @@
 # -*- mode: makefile-gmake -*-
 # ============================================================================ #
 
-.DEFAULT_GOAL := test
+.DEFAULT_GOAL := bins
 .PHONY = clean check_gcc print_gcc_info gamemaster
 
-BINS := cpoke parse_gm fetch_gm test iv_store_build
-all: ${BINS}
+BINS := cpoke parse_gm fetch_gm
+DATA := test iv_store_build
+bins: ${BINS}
+all: ${BINS} ${DATA}
 
 
 # ---------------------------------------------------------------------------- #
 
-CC = gcc
+CC = gcc-11
 IS_OSX := $(shell ${CC} --version|grep -qi '\(apple\|llvm\|clang\)'           \
                     && echo 1 || echo 0)
 CC_VERSION := $(shell ${CC} -dumpversion)
@@ -92,8 +94,7 @@ cpoke: main.o ${CORE_OBJECTS} ai.o
 
 # ---------------------------------------------------------------------------- #
 
-data/cstore_data.c: parse_gm fetch_gm
-	./fetch_gm
+data/cstore_data.c: parse_gm data/GAME_MASTER.json
 	./parse_gm -f data/GAME_MASTER.json -e c > $@
 
 cstore_data.o: data/cstore_data.c ${HEADERS}
@@ -167,8 +168,13 @@ naive_ai.so:  naive_ai_so.o ${CORE_OBJECTS} ${SIM_OBJECTS}
 
 # NOTE: `GAME_MASTER.json' files are currently broken since Niantic started
 #       encoding them. For now we are working off of an old un-encrypted copy!
-GM_URL := 'https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-'
-GM_URL := ${GM_URL}'game-master/master/versions/latest/V2_GAME_MASTER.json'
+# GM_URL := 'https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-'
+# GM_URL := ${GM_URL}'game-master/master/versions/latest/V2_GAME_MASTER.json'
+# GM_URL := 'https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-game-master/f28833a22c74a52a1f8b8cbaa89695d22fce83d9/versions/latest/GAME_MASTER.json'
+# very old version
+# GM_URL := 'https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-game-master/f28833a22c74a52a1f8b8cbaa89695d22fce83d9/versions/latest/V2_GAME_MASTER.json'
+# version from around when this project stopped updating
+GM_URL := 'https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-game-master/aab843b31a6c4e4284811359215aa277c00e50a2/versions/latest/V2_GAME_MASTER.json'
 data/GAME_MASTER.json: FORCE
 	wget -O $@ ${GM_URL}
 

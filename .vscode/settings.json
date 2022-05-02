@@ -1,0 +1,9 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "cquery.cacheDirectory": "${workspaceFolder}/.vscode/cquery_cached_index/",
+    "files.associations": {
+        "uthash.h": "c",
+        "cstore_template.h": "c",
+        "jsmn_iterator.h": "c"
+    }
+}
